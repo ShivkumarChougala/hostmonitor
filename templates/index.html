@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Host Monitor</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
+        <div>
+            <div class="brand">
+                HOST<span>MONITOR</span>
+            </div>
+
+            <div class="host-subtitle">
+                <span id="hostname">--</span>
+                <span class="separator">/</span>
+                <span id="distribution">--</span>
+            </div>
+        </div>
+
+        <div class="topbar-right">
+
+            <div class="live">
+                <span class="live-dot"></span>
+                LIVE
+            </div>
+
+            <div id="clock" class="clock">--:--:--</div>
+
+        </div>
+
+    </header>
+
+
+    <!-- STATUS BAR -->
+
+    <section class="status-strip">
+
+        <div class="status-item">
+            <span>HOST STATUS</span>
+            <strong id="host-status">--</strong>
+        </div>
+
+        <div class="status-item">
+            <span>HEALTH SCORE</span>
+            <strong id="health-score">--</strong>
+        </div>
+
+        <div class="status-item">
+            <span>UPTIME</span>
+            <strong id="uptime">--</strong>
+        </div>
+
+        <div class="status-item">
+            <span>KERNEL</span>
+            <strong id="kernel">--</strong>
+        </div>
+
+        <div class="status-item">
+            <span>ARCH</span>
+            <strong id="architecture">--</strong>
+        </div>
+
+    </section>
+
+
+    <!-- PRIMARY METRICS -->
+
+    <main class="dashboard-grid">
+
+        <!-- CPU -->
+
+        <section class="card cpu-card">
+
+            <div class="card-header">
+                <span>CPU</span>
+                <span id="cpu-state" class="badge">--</span>
+            </div>
+
+            <div class="big-metric">
+                <span id="cpu-usage">0</span><small>%</small>
+            </div>
+
+            <div class="progress">
+                <div id="cpu-bar" class="progress-fill"></div>
+            </div>
+
+            <div id="cpu-model" class="muted cpu-model">--</div>
+
+            <div class="stats-grid">
+
+                <div>
+                    <span>CORES</span>
+                    <strong id="cpu-cores">--</strong>
+                </div>
+
+                <div>
+                    <span>THREADS</span>
+                    <strong id="cpu-threads">--</strong>
+                </div>
+
+                <div>
+                    <span>CLOCK</span>
+                    <strong id="cpu-clock">--</strong>
+                </div>
+
+                <div>
+                    <span>MAX</span>
+                    <strong id="cpu-max">--</strong>
+                </div>
+
+            </div>
+
+            <div class="subheading">LOGICAL CPU LOAD</div>
+
+            <div id="core-list" class="core-list"></div>
+
+            <div class="load-row">
+                <div>
+                    <span>1 MIN</span>
+                    <strong id="load-1">--</strong>
+                </div>
+
+                <div>
+                    <span>5 MIN</span>
+                    <strong id="load-5">--</strong>
+                </div>
+
+                <div>
+                    <span>15 MIN</span>
+                    <strong id="load-15">--</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- MEMORY -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <span>MEMORY</span>
+                <span id="ram-state" class="badge">--</span>
+            </div>
+
+            <div class="big-metric">
+                <span id="ram-percent">0</span><small>%</small>
+            </div>
+
+            <div class="progress">
+                <div id="ram-bar" class="progress-fill"></div>
+            </div>
+
+            <div class="stats-list">
+
+                <div>
+                    <span>USED</span>
+                    <strong id="ram-used">--</strong>
+                </div>
+
+                <div>
+                    <span>AVAILABLE</span>
+                    <strong id="ram-available">--</strong>
+                </div>
+
+                <div>
+                    <span>TOTAL</span>
+                    <strong id="ram-total">--</strong>
+                </div>
+
+                <div>
+                    <span>SWAP</span>
+                    <strong id="swap">--</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STORAGE -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <span>STORAGE</span>
+                <span id="disk-state" class="badge">--</span>
+            </div>
+
+            <div class="big-metric">
+                <span id="disk-percent">0</span><small>%</small>
+            </div>
+
+            <div class="progress">
+                <div id="disk-bar" class="progress-fill"></div>
+            </div>
+
+            <div id="disk-model" class="muted disk-model">--</div>
+
+            <div class="stats-list">
+
+                <div>
+                    <span>USED</span>
+                    <strong id="disk-used">--</strong>
+                </div>
+
+                <div>
+                    <span>FREE</span>
+                    <strong id="disk-free">--</strong>
+                </div>
+
+                <div>
+                    <span>READ</span>
+                    <strong id="disk-read">--</strong>
+                </div>
+
+                <div>
+                    <span>WRITE</span>
+                    <strong id="disk-write">--</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- THERMALS -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <span>THERMALS</span>
+                <span id="temp-state" class="badge">--</span>
+            </div>
+
+            <div class="temperature-main">
+                <span id="cpu-temp">--</span><small>°C</small>
+            </div>
+
+            <div class="muted">CPU PACKAGE</div>
+
+            <div id="thermal-list" class="thermal-list"></div>
+
+            <div class="subheading">COOLING</div>
+
+            <div id="fan-list" class="fan-list"></div>
+
+        </section>
+
+
+        <!-- NETWORK -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <span>NETWORK</span>
+                <span id="network-state" class="badge">--</span>
+            </div>
+
+            <div class="network-interface">
+                <span>INTERFACE</span>
+                <strong id="network-interface">--</strong>
+            </div>
+
+            <div class="network-speed">
+
+                <div>
+                    <span class="arrow">↓</span>
+                    <strong id="download">--</strong>
+                    <small>MB/s</small>
+                    <p>DOWNLOAD</p>
+                </div>
+
+                <div>
+                    <span class="arrow">↑</span>
+                    <strong id="upload">--</strong>
+                    <small>MB/s</small>
+                    <p>UPLOAD</p>
+                </div>
+
+            </div>
+
+            <div class="stats-list">
+
+                <div>
+                    <span>TOTAL RX</span>
+                    <strong id="total-rx">--</strong>
+                </div>
+
+                <div>
+                    <span>TOTAL TX</span>
+                    <strong id="total-tx">--</strong>
+                </div>
+
+                <div>
+                    <span>RX ERRORS</span>
+                    <strong id="rx-errors">--</strong>
+                </div>
+
+                <div>
+                    <span>TX ERRORS</span>
+                    <strong id="tx-errors">--</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- VIRTUALIZATION -->
+
+        <section class="card">
+
+            <div class="card-header">
+                <span>VIRTUALIZATION</span>
+                <span class="badge good">KVM</span>
+            </div>
+
+            <div class="stats-list">
+
+                <div>
+                    <span>KVM</span>
+                    <strong id="kvm">--</strong>
+                </div>
+
+                <div>
+                    <span>LIBVIRT</span>
+                    <strong id="libvirt">--</strong>
+                </div>
+
+                <div>
+                    <span>URI</span>
+                    <strong id="libvirt-uri">--</strong>
+                </div>
+
+            </div>
+
+            <div class="vm-counts">
+
+                <div>
+                    <strong id="vm-running">0</strong>
+                    <span>RUNNING</span>
+                </div>
+
+                <div>
+                    <strong id="vm-stopped">0</strong>
+                    <span>STOPPED</span>
+                </div>
+
+                <div>
+                    <strong id="vm-total">0</strong>
+                    <span>TOTAL</span>
+                </div>
+
+            </div>
+
+            <div id="vm-list" class="vm-list"></div>
+
+        </section>
+
+
+        <!-- DOCKER -->
+
+        <section class="card wide">
+
+            <div class="card-header">
+                <span>DOCKER</span>
+                <span id="docker-count" class="badge">--</span>
+            </div>
+
+            <div id="docker-list" class="docker-list"></div>
+
+        </section>
+
+
+        <!-- CAPACITY -->
+
+        <section class="card wide capacity-card">
+
+            <div class="card-header">
+                <span>VM CAPACITY</span>
+                <span id="constraint-badge" class="badge">--</span>
+            </div>
+
+            <div class="capacity-metrics">
+
+                <div>
+                    <span>CPU HEADROOM</span>
+                    <strong id="capacity-cpu">--</strong>
+                </div>
+
+                <div>
+                    <span>AVAILABLE RAM</span>
+                    <strong id="capacity-ram">--</strong>
+                </div>
+
+                <div>
+                    <span>FREE STORAGE</span>
+                    <strong id="capacity-storage">--</strong>
+                </div>
+
+            </div>
+
+            <div class="subheading">ADDITIONAL VM ESTIMATE</div>
+
+            <div class="vm-recommendations">
+
+                <div>
+                    <span>2 GB VM</span>
+                    <strong id="vm-2gb">--</strong>
+                </div>
+
+                <div>
+                    <span>4 GB VM</span>
+                    <strong id="vm-4gb">--</strong>
+                </div>
+
+                <div>
+                    <span>8 GB VM</span>
+                    <strong id="vm-8gb">--</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- WARNINGS -->
+
+        <section class="card wide">
+
+            <div class="card-header">
+                <span>HOST WARNINGS</span>
+                <span id="warning-count" class="badge">0</span>
+            </div>
+
+            <div id="warnings" class="warnings"></div>
+
+        </section>
+
+
+        <!-- PROCESSES -->
+
+        <section class="card full">
+
+            <div class="card-header">
+                <span>TOP PROCESSES</span>
+                <span class="muted">LIVE</span>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                    <tr>
+                        <th>PID</th>
+                        <th>PROCESS</th>
+                        <th>USER</th>
+                        <th>CPU</th>
+                        <th>RAM</th>
+                        <th>MEMORY</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="process-table"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <span>HOSTMONITOR</span>
+        <span>Refresh <strong id="refresh-time">--</strong></span>
+    </footer>
+
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='js/dashboard.js') }}">
+</script>
+
+</body>
+</html>
